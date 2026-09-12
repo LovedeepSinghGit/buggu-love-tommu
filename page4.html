@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>For Buggu — Our Little Fairytale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:Outfit,Arial,sans-serif;background:#111;color:#fff}
+#bg{position:fixed;inset:-2%;z-index:0;background:center/cover no-repeat url('Zoo-01.png');transform:scale(1.03);transition:opacity .75s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+.tint{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(5,3,7,.72),rgba(5,3,7,.08) 58%,rgba(5,3,7,.12))}
+.vignette{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.3))}
+.app{position:relative;z-index:5;width:100%;height:100%;padding:clamp(20px,3vw,48px);pointer-events:none}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.badge{padding:9px 15px;border:1px solid #fff6;border-radius:999px;background:#ffffff20;backdrop-filter:blur(10px);font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.progress{text-align:right;font-size:.78rem;font-weight:800;color:#fffc}.line{width:180px;height:4px;margin-top:8px;background:#fff4;border-radius:99px;overflow:hidden}.fill{height:100%;background:#fff;border-radius:99px;transition:width .7s ease}
+.area{position:fixed;left:0;right:0;bottom:0;z-index:8;padding:0 clamp(20px,3vw,48px) clamp(22px,3vw,48px);pointer-events:none}
+.card{width:min(920px,63vw);max-height:32vh;padding:18px 24px;border:1px solid #fff4;border-radius:20px;background:rgba(12,9,14,.46);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 18px 55px #0005;overflow:hidden;opacity:0;transform:translateY(22px)}
+.card.in{animation:storyIn .65s cubic-bezier(.16,1,.3,1) forwards}.card.out{animation:storyOut .35s ease forwards}
+.text{max-height:calc(32vh - 36px);overflow:auto;padding-right:7px;scrollbar-width:thin;scrollbar-color:#fff6 transparent}
+.text::-webkit-scrollbar{width:4px}.text::-webkit-scrollbar-thumb{background:#fff6;border-radius:99px}
+.cols{column-count:1;column-gap:28px;font-size:clamp(.88rem,1vw,1.02rem);line-height:1.43;font-weight:500;color:#fff}
+.cols.long{column-count:2}.cols br{line-height:1.25}.cols strong{font-weight:800;color:#fff;text-shadow:0 1px 8px #0006}.cols .quote{font-size:1.55em;font-weight:800}.cols .big{font-size:1.45em;font-weight:900}.cols .center{text-align:center}
+.next{position:fixed;right:clamp(22px,3vw,48px);bottom:clamp(22px,3vw,48px);z-index:30;pointer-events:auto;width:205px;padding:12px 17px 12px 23px;border:1px solid #fff;border-radius:999px;background:#fffffff2;color:#4a2635;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 16px 42px #0006,0 0 0 7px #fff1;opacity:0;transform:translateY(18px) scale(.95);animation:buttonIn .7s .45s cubic-bezier(.16,1,.3,1) forwards;transition:transform .25s ease,box-shadow .25s ease}
+.next:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 22px 48px #0007,0 0 0 9px #fff2}.next:active{transform:scale(.98)}
+.label{font-size:.95rem;font-weight:900}.arrow{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#4a2635;color:#fff;font-size:1.1rem;transition:transform .25s}.next:hover .arrow{transform:translateX(4px)}
+@keyframes storyIn{from{opacity:0;transform:translateY(22px);filter:blur(5px)}to{opacity:1;transform:none;filter:none}}
+@keyframes storyOut{to{opacity:0;transform:translateY(10px);filter:blur(4px)}}@keyframes buttonIn{to{opacity:1;transform:none}}
+@media(max-width:800px){.app{padding:18px}.line{width:125px}.area{padding:0 18px 80px}.card{width:100%;max-height:38vh;padding:15px 17px}.text{max-height:calc(38vh - 30px)}.cols.long{column-count:1}.cols{font-size:.88rem}.next{right:18px;bottom:18px;width:185px}}
+</style>
+</head>
+<body>
+<div id="bg"></div><div class="tint"></div><div class="vignette"></div>
+<div class="app"><div class="top"><div class="badge">♥ Our Little Fairytale</div><div class="progress"><div id="prog">PART 1 OF 17</div><div class="line"><div class="fill" id="fill"></div></div></div></div>
+<div class="area"><section class="card in" id="card"><div class="text"><div class="cols" id="text"></div></div></section></div></div>
+<button class="next" id="next"><span class="label" id="label">NEXT →</span><span class="arrow">→</span></button>
+<script>
+const P=[
+['Zoo-01.png','PART 1 — A Day at the Zoo','NEXT',`<strong>Once upon a time...</strong><br>There was a boy who decided to visit the zoo.<br>He wasn't expecting anything extraordinary.<br>He just wanted to spend the day walking around, enjoying the beautiful weather, looking at animals, and forgetting about everything else for a while.<br>So he put on his favourite clothes, grabbed his backpack, and walked into the zoo.<br>There were people everywhere.<br>Children were running around.<br>Birds were singing.<br>And animals were peacefully enjoying their little homes.<br>The boy walked from one enclosure to another, taking everything in.<br>And then he stopped in front of a huge elephant.<br>He stood there quietly, watching it.<br><strong class="quote">"Wow..."</strong><br>It was a beautiful day.<br>And he had absolutely no idea...<br><strong>that somewhere inside this zoo, he was about to meet someone who would completely steal his heart. ❤️</strong>`],
+['Zoo-02.png','PART 2 — Enjoying the Day','NEXT',`The boy continued exploring.<br>He walked past the elephants...<br>then the birds...<br>then the reptiles...<br>then the big cats...<br>There was so much to see.<br>He was having the time of his life.<br>Every few steps, something new caught his attention.<br>He stopped.<br>He looked.<br>He smiled.<br>He kept walking.<br>It was just supposed to be a normal, fun day at the zoo.<br><strong>But then...</strong><br>As he was walking past another enclosure, something caught his attention.<br>He slowed down.<br>He looked toward the enclosure.<br>And suddenly...<br><strong>he couldn't look away.</strong><br>His heart started beating a little faster.<br>❤️<br><strong>"Wait..."</strong><br><strong>"What is that?"</strong>`],
+['Zoo-03.png','PART 3 — The Most Beautiful Animal','NEXT',`The boy slowly walked closer.<br>He leaned against the railing.<br>He stared into the enclosure.<br>Whatever was there...<br><strong>was beautiful.</strong><br>He didn't even know what animal it was yet.<br>But something about her had completely captured his attention.<br>He couldn't explain it.<br>He couldn't understand it.<br>He just knew that he wanted to stay there and keep looking.<br>The rest of the zoo suddenly disappeared.<br>The people walking around him didn't matter.<br>The other animals didn't matter.<br>There was only <strong>her</strong>.<br>He smiled.<br>She looked back at him.<br>And for a moment...<br>it felt like the entire world had gone quiet.<br><strong class="quote">"You're beautiful..."</strong><br>He leaned a little closer.<br>His heart was already gone.<br>He just didn't know who had stolen it yet.<br>So the boy decided to take a closer look.<br><strong>And that's when he finally discovered what she was...</strong>`],
+['Zoo-04.png','PART 4 — The Reveal 🦛','NEXT',`<strong class="big center">A HIPPO.</strong><br><span class="big center">😭🦛❤️</span><br>Not a lion.<br>Not a tiger.<br>Not a giraffe.<br>Not even the majestic elephant he had seen earlier.<br><strong class="big">A HIPPO.</strong><br>And not just any hippo.<br>She was the cutest little hippo he had ever seen.<br>She was sitting peacefully in the water, looking completely adorable.<br>The boy stared at her.<br>She stared back.<br>And somehow...<br><strong>he fell in love.</strong><br>He didn't know how it happened.<br>He didn't know why it happened.<br>But it happened.<br>❤️<br>The boy smiled.<br>The hippo smiled.<br>And somewhere inside his heart, he heard a tiny voice saying:<br><strong>"That's my girl."</strong><br>He had come to the zoo to see animals...<br><strong>but he had accidentally found the love of his life.</strong><br>And suddenly, one thought entered his mind:<br><strong class="quote">"I want to take her home."</strong>`],
+['Zoo-05.png','PART 5 — The First Touch','PET HER AGAIN',`The boy walked as close to the enclosure as he was allowed.<br>He looked at her.<br>She looked at him.<br>He slowly reached his hand toward her.<br>And somehow...<br><strong>she came closer.</strong><br>The boy gently touched her.<br>He petted her head.<br>She didn't move away.<br>Instead, she seemed to enjoy it.<br>The boy's heart melted.<br><strong>"You're even cuter up close."</strong><br>The hippo gave him the happiest little look.<br>And that was the moment he made a decision.<br><strong>He wasn't leaving without her.</strong>`],
+['Zoo-06.png','PART 6 — A Completely Reasonable Decision','NEXT',`The boy walked straight toward the zoo manager.<br>The manager looked at him.<br><strong>"Can I help you?"</strong><br>The boy pointed toward the hippo.<br><strong>"I want her."</strong><br>The manager paused.<br>"...You want to see her again?"<br>"No."<br>The boy took a deep breath.<br><strong>"I want to take her home."</strong><br>The manager stared at him.<br>"Sir... that's a hippo."<br>"I know."<br>"A very large hippo."<br>"I know."<br>"You can't keep a hippo in your house."<br>The boy thought about it for a second.<br><strong>"I'll figure that part out later."</strong><br>😂<br>The manager had absolutely no idea what to say.`],
+['Zoo-07.png','PART 7 — The Negotiation','NEXT',`The boy wasn't giving up.<br>He tried everything.<br>"Please."<br>"No."<br>"I'll take very good care of her."<br>"No."<br>"I'll feed her."<br>"Sir, you can't afford to feed a hippo."<br>The boy became quiet.<br>He checked his wallet.<br>He counted his money.<br>Then he looked back at the manager.<br><strong>"How much?"</strong><br>The manager laughed.<br>"You couldn't afford her."<br>The boy looked at his wallet again.<br>He looked at the hippo.<br>She was peacefully sitting in the water.<br>Looking adorable.<br>Looking at him.<br>He sighed.<br><strong>"I'll pay everything I have."</strong><br>The manager stopped laughing.<br>The boy emptied his wallet onto the desk.<br><strong>Every.<br>Single.<br>Rupee.</strong>`],
+['Zoo-08.png','PART 8 — The Deal ❤️','TAKE HER HOME →',`The manager looked at the money.<br>Then he looked at the boy.<br>Then he looked at the hippo.<br>Then back at the boy.<br>"You're seriously going to spend all your money on her?"<br>The boy smiled.<br><strong>"Yes."</strong><br>"You'll have nothing left."<br><strong>"That's okay."</strong><br>"Are you sure?"<br>The boy looked at his hippo.<br>She was happily looking back at him.<br>He smiled.<br><strong>"She's worth it."</strong><br>The manager sighed.<br>He couldn't understand the boy.<br>But he could see how happy the boy was.<br>Finally, he shook his hand.<br><strong>"Deal."</strong><br>❤️<br>And just like that...<br><strong>the boy spent every last rupee he had to bring his favourite hippo home.</strong>`],
+['Zoo-09.png',"PART 9 — We're Going Home!",'NEXT',`And so...<br>the boy and his hippo left the zoo together.<br>The boy was smiling.<br>The hippo was happy.<br>Everyone around them was staring.<br>Some people were confused.<br>Some were taking pictures.<br>One little kid pointed at them and shouted:<br><strong>"MUMMY! THAT MAN IS WALKING WITH A HIPPO!"</strong><br>The boy didn't care.<br>He looked at her.<br>She looked at him.<br>And they continued walking.<br>They didn't have much.<br>He had almost no money left.<br>She was approximately the size of a small car.<br>But somehow...<br><strong>they were both incredibly happy. ❤️</strong>`],
+['Zoo-10.png','PART 10 — Welcome Home, My Hippo','NEXT',`After a long journey, they finally reached his home.<br>The boy opened the door.<br>He stepped aside.<br><strong>"Welcome home."</strong><br>The hippo walked inside.<br>She looked around.<br>The boy looked around too.<br>Everything seemed normal...<br>until he realized something.<br><strong>There was absolutely nowhere for a hippo to sit.</strong><br>The sofa?<br>Too small.<br>The chair?<br>Impossible.<br>The balcony?<br>Absolutely not.<br>The boy looked at her.<br>She looked at him.<br>He sighed.<br><strong>"We'll figure it out."</strong><br>And somehow...<br>they did.`],
+['Zoo-11.png','PART 11 — Dinner for Two 🪳','DINNER IS SERVED →',`Evening arrived.<br>The boy was hungry.<br>His hippo was hungry.<br>He opened the fridge.<br><strong>Nothing.</strong><br>He checked the kitchen.<br><strong>Nothing.</strong><br>He checked his wallet.<br><strong>Also nothing.</strong><br>He remembered what he had done earlier.<br>He had spent every last rupee...<br><strong>on his hippo.</strong><br>Suddenly, something moved across the kitchen floor.<br>🪳<br>The boy looked at it.<br>Then looked at his hippo.<br>His hippo looked at it too.<br>They looked at each other.<br>The boy smiled.<br><strong>"Dinner?"</strong><br>The hippo happily opened her mouth.<br>And so...<br>that night, they enjoyed the most luxurious dinner they could afford:<br><strong class="big center">FREE COCKROACHES.</strong><br>😂🪳<br>They ate together.<br>They laughed together.<br>And despite having absolutely no money...<br><strong>they were still happy. ❤️</strong>`],
+['Zoo-12.png','PART 12 — Movie Night','NEXT',`After their five-star cockroach dinner...<br>it was time to relax.<br>The boy turned on the TV.<br>He sat on the sofa.<br>His hippo sat beside him.<br>Well...<br>She didn't exactly sit <strong>beside</strong> him.<br>She sat on approximately <strong>93% of the sofa.</strong><br>The boy was left with a tiny corner.<br>He looked at her.<br>She looked at him.<br>He sighed.<br><strong>"Fine."</strong><br>He leaned against her.<br>They watched TV together.<br>No fancy restaurant.<br>No expensive entertainment.<br>No money.<br>Just a boy...<br>his favourite hippo...<br>and a quiet evening together.<br>And somehow, that was enough.`],
+['Zoo-13.png','PART 13 — Goodnight ❤️','SLEEP →',`It was getting late.<br>The boy turned off the TV.<br><strong>"Come on, sleepyhead."</strong><br>They went to the bedroom.<br>The boy got into bed.<br>His hippo climbed onto the mattress.<br><strong class="big">CREAAAAK.</strong><br>The bed made a noise.<br>The boy froze.<br>He looked at the bed.<br>The bed looked like it was fighting for its life.<br>😂<br>The boy laughed.<br>He moved closer to her.<br>He gently petted her head one last time.<br><strong>"Goodnight, my cute little hippo."</strong><br>She closed her eyes.<br>The boy smiled.<br>And soon...<br>they both fell asleep.<br>Together.<br>Happy.<br>Completely unaware that something magical was about to happen.`],
+['Zoo-14.png','PART 14 — The Magic','NEXT MORNING →',`Midnight came.<br>The house was completely silent.<br>The moonlight slowly entered through the window.<br>A soft light fell upon the sleeping hippo.<br>✨<br>Something strange began to happen.<br>The room filled with a warm golden glow.<br>The hippo started glowing.<br>The boy continued sleeping peacefully.<br>He had absolutely no idea.<br>The magic grew stronger.<br>And then...<br><strong>WHOOSH.</strong><br>The hippo began to transform.<br>Her body slowly changed.<br>Her little ears changed.<br>Her face changed.<br>Her legs changed.<br>And slowly...<br><strong>the hippo was gone.</strong><br>But someone was still sleeping beside the boy.<br>Someone very familiar.<br>Someone very beautiful.<br>❤️`],
+['Zoo-15.png','PART 15 — The Morning After','NEXT',`The next morning...<br>The boy slowly opened his eyes.<br>He was still half asleep.<br>He smiled.<br>He reached his hand toward the person sleeping beside him.<br>And then...<br><strong>he froze.</strong><br>😳<br>He looked again.<br>He rubbed his eyes.<br>He looked again.<br><strong>His hippo was gone.</strong><br>In her place...<br>was a beautiful girl sleeping peacefully beside him.<br>The boy sat up.<br><strong>"WHAT?!"</strong><br>The girl slowly opened her eyes.<br>She looked at him.<br>Smiled.<br>And sleepily said:<br><strong>"Good morning."</strong><br>The boy stared at her.<br>"Who are you?!"<br>She smiled.<br><strong>"You really don't recognize me?"</strong><br>He looked confused.<br>Then she smiled the exact same way his little hippo used to smile.<br>The boy's eyes widened.<br><strong>"...No way."</strong>`],
+['Zoo-16.png','PART 16 — My Hippo?! 🦛❤️','NEXT',`The girl laughed.<br><strong>"Yes, stupid."</strong><br>The boy couldn't believe it.<br><strong>"YOU'RE MY HIPPO?!"</strong><br>She nodded.<br>"Your cute little hippo."<br>He stared at her for a few seconds.<br>Then he started laughing.<br>He couldn't believe what had happened.<br>He had gone to the zoo...<br>fallen in love with a hippo...<br>spent every last rupee he had...<br>brought her home...<br>eaten cockroaches with her...<br>watched TV with her...<br>slept beside her...<br><strong>and somehow woke up next to the girl he loved.</strong><br>He smiled.<br>She looked at him.<br>"So..."<br>"Hmm?"<br><strong>"Do you still think I look like a hippo?"</strong><br>The boy thought about it.<br>He smiled.<br><strong>"Absolutely."</strong><br>She hit him.<br>😂❤️`],
+['Zoo-17.png',"PART 17 — And That's How It Happened",'THE END ❤️',`And that...<br>is the story of how a boy went to the zoo for a normal day...<br>and came back with his favourite person in the world.<br>He didn't find the most majestic animal.<br>He didn't find the strongest animal.<br>He didn't find the most dangerous animal.<br><strong>He found his hippo.</strong><br>And apparently...<br>his hippo had been a beautiful girl all along. ❤️<br>So if I ever call you <strong>my hippo</strong>...<br>remember...<br>it's not because I think you're an animal.<br>It's because, in my very stupid little fairytale...<br><strong>the most adorable hippo in the entire zoo was the one I fell in love with.</strong> 🦛❤️<br><strong>And I would still spend every last rupee to bring her home.</strong><br><strong class="big center">The End. ❤️</strong>`]
+];
+const bg=document.getElementById('bg');
+const card=document.getElementById('card');
+const text=document.getElementById('text');
+const label=document.getElementById('label');
+const prog=document.getElementById('prog');
+const fill=document.getElementById('fill');
+const next=document.getElementById('next');
+
+let i=0;
+let busy=false;
+
+function render(){
+  const part=P[i];
+  const story=part[3];
+
+  text.innerHTML=story;
+  text.className='cols'+(story.split('<br>').length>=27?' long':'');
+  label.textContent=part[2];
+  prog.textContent='PART '+(i+1)+' OF '+P.length;
+  fill.style.width=((i+1)/P.length*100)+'%';
+  text.scrollTop=0;
+}
+
+function preload(index){
+  [index-1,index,index+1].forEach(n=>{
+    if(n>=0 && n<P.length){
+      const img=new Image();
+      img.src=P[n][0];
+    }
+  });
+}
+
+function go(){
+  if(busy) return;
+  if(i>=P.length-1){
+    window.location.href='page5.html';
+    return;
+  }
+  busy=true;
+  next.style.pointerEvents='none';
+
+  card.classList.remove('in');
+  card.classList.add('out');
+  bg.style.opacity='.12';
+  bg.style.transform='scale(1.055)';
+
+  setTimeout(()=>{
+    i++;
+    bg.style.backgroundImage="url('"+P[i][0]+"')";
+    render();
+    bg.style.opacity='1';
+    bg.style.transform='scale(1.03)';
+
+    card.classList.remove('out');
+    void card.offsetWidth;
+    card.classList.add('in');
+
+    setTimeout(()=>{
+      busy=false;
+      next.style.pointerEvents='auto';
+      preload(i);
+    },300);
+  },400);
+}
+
+next.addEventListener('click',go);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='Enter') go();
+});
+
+render();
+preload(0);
+</script>
+</body></html>

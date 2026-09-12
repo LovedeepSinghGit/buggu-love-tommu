@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Buggu</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffb3c1 0%, #fecfef 50%, #feada6 100%);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Background floating elements */
+        #floating-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .floating-icon {
+            position: absolute;
+            bottom: -50px;
+            user-select: none;
+            animation: floatAndRotate linear infinite;
+            will-change: transform, opacity;
+            font-weight: bold;
+        }
+
+        @keyframes floatAndRotate {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.9);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: var(--target-opacity, 0.5);
+            }
+
+            80% {
+                opacity: var(--target-opacity, 0.5);
+            }
+
+            100% {
+                transform: translateY(-115vh) rotate(180deg) scale(1.05);
+                opacity: 0;
+            }
+        }
+
+        /* Main Glass Card */
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 3.5rem 3rem;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(255, 105, 135, 0.25),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            text-align: center;
+            max-width: 90%;
+            width: 460px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.2rem;
+            z-index: 10;
+            position: relative;
+
+            /* Step 1: Smooth card open from CENTER */
+            transform-origin: center center;
+            animation: cardOpen 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: transform, opacity;
+        }
+
+        .header-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        /* Typewriter text effect */
+        .title {
+            font-size: 3.8rem;
+            background: linear-gradient(45deg, #ff3366, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 4px 12px rgba(255, 51, 102, 0.15));
+            min-width: 1px;
+            white-space: nowrap;
+        }
+
+        /* Button Styling & Smooth Hover Transitions */
+        .btn {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 2rem 0.6rem 0.8rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.35);
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+
+            /* Center-based scaling setup */
+            transform-origin: center center;
+            transform: scale(0);
+            opacity: 0;
+
+            /* Ultra-smooth cubic-bezier transition for hover effects */
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.5s ease,
+                opacity 0.4s ease;
+            will-change: transform, box-shadow;
+        }
+
+        /* Revealed state applied by JS after typing */
+        .btn.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Hover Animation (Centered scaling + deep red shadow) */
+        .btn.revealed:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 0 18px 38px rgba(255, 65, 108, 0.55);
+        }
+
+        .btn.revealed:active {
+            transform: scale(0.96) translateY(1px);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+        }
+
+        /* Avatars setup */
+        .avatar-buggu,
+        .avatar-tommu {
+            opacity: 0;
+            transform: scale(0);
+            border-radius: 50%;
+            object-fit: cover;
+            will-change: transform, opacity;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .avatar-buggu {
+            width: 72px;
+            height: 72px;
+            border: 3px solid #ffffff;
+            box-shadow: 0 8px 20px rgba(255, 51, 102, 0.25);
+        }
+
+        .avatar-tommu {
+            width: 44px;
+            height: 44px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+        }
+
+        /* Rotate icon inside button on hover */
+        .btn.revealed:hover .avatar-tommu {
+            transform: scale(1.05) rotate(14deg);
+        }
+
+        .avatar-buggu.pop-up,
+        .avatar-tommu.pop-up {
+            animation: popUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Keyframes */
+        @keyframes cardOpen {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+                filter: blur(12px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes popUp {
+            0% {
+                opacity: 0;
+                transform: scale(0);
+            }
+
+            70% {
+                transform: scale(1.18);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="floating-container"></div>
+
+    <div class="container">
+        <div class="header-wrapper">
+            <h1 class="title" id="typewriter"></h1>
+            <img src="buggu.png" alt="Buggu" class="avatar-buggu" id="bugguAvatar">
+        </div>
+
+        <button class="btn" id="tommuBtn">
+            <img src="tommu.png" alt="Tommu" class="avatar-tommu" id="tommuAvatar">
+            <span>Hi Tommu</span>
+        </button>
+    </div>
+
+    <script>
+        // Floating icons script
+        const symbols = ['♥', '❥', '✦', '❀', '♩'];
+        const colors = ['#ff3366', '#ff4b2b', '#ff85a2', '#e6004c'];
+        const container = document.getElementById('floating-container');
+
+        function createFloatingIcon() {
+            const icon = document.createElement('div');
+            icon.classList.add('floating-icon');
+            icon.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const startLeft = Math.random() * 100;
+            const duration = 14 + Math.random() * 8;
+            const size = 1.2 + Math.random() * 1.2;
+            const opacity = 0.3 + Math.random() * 0.35;
+
+            icon.style.left = `${startLeft}%`;
+            icon.style.color = color;
+            icon.style.animationDuration = `${duration}s`;
+            icon.style.fontSize = `${size}rem`;
+            icon.style.setProperty('--target-opacity', opacity);
+
+            container.appendChild(icon);
+
+            setTimeout(() => { icon.remove(); }, duration * 1000);
+        }
+
+        for (let i = 0; i < 4; i++) {
+            setTimeout(createFloatingIcon, Math.random() * 3000);
+        }
+        setInterval(createFloatingIcon, 2000);
+
+        // Sequence Controller Script
+        const textToType = "Hii Buggu";
+        const typewriterEl = document.getElementById('typewriter');
+        const tommuBtn = document.getElementById('tommuBtn');
+        const bugguAvatar = document.getElementById('bugguAvatar');
+        const tommuAvatar = document.getElementById('tommuAvatar');
+
+        // Step 1: Wait for White Card opening animation (1.4s)
+        setTimeout(() => {
+            // Step 2a: Reveal button from center smoothly
+            tommuBtn.classList.add('revealed');
+
+            // Step 2b: Typewriter effect for "Hii Buggu"
+            let charIndex = 0;
+            const typingInterval = setInterval(() => {
+                typewriterEl.textContent += textToType[charIndex];
+                charIndex++;
+
+                if (charIndex === textToType.length) {
+                    clearInterval(typingInterval);
+
+                    // Step 3: Trigger Icon Pop Ups after text typing completes
+                    setTimeout(() => {
+                        bugguAvatar.classList.add('pop-up');
+                        tommuAvatar.classList.add('pop-up');
+                    }, 350);
+                }
+            }, 130);
+
+        }, 1400);
+
+        tommuBtn.addEventListener('click', function () {
+            window.location.href = 'page2.html';
+        });
+    </script>
+
+</body>
+
+</html>

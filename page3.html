@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Buggu — One More Thing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #d92f63;
+            --deep-pink: #b51f4d;
+            --cream: #fff8f0;
+            --brown: #4a2f27;
+            --cafe-brown: #6f4935;
+            --warning: #ff3d3d;
+            --warning-dark: #4a0710;
+            --cafe-zoom: 1.70;
+        }
+
+        * { box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            color: var(--brown);
+            background: #f5c7cf;
+        }
+
+        button {
+            font: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .screen {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        /* =========================================================
+           PAGE 3 — ROMANTIC OPENING
+           ========================================================= */
+        #loveScreen {
+            z-index: 1;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 45%, #ffc3a0 100%);
+            transition: opacity .8s ease, visibility .8s ease;
+        }
+
+        #loveScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .glow {
+            position: absolute;
+            width: 48vmax;
+            height: 48vmax;
+            border-radius: 50%;
+            background: rgba(255,255,255,.27);
+            filter: blur(16px);
+            pointer-events: none;
+        }
+        .glow.one { top: -26vmax; left: -18vmax; }
+        .glow.two { right: -20vmax; bottom: -28vmax; }
+
+        .spark {
+            position: absolute;
+            color: rgba(255,255,255,.88);
+            font-size: 1.4rem;
+            animation: drift 5s ease-in-out infinite alternate;
+        }
+        .s1 { left: 7%; top: 15%; }
+        .s2 { right: 9%; top: 21%; animation-delay: -2s; }
+        .s3 { right: 16%; bottom: 16%; animation-delay: -3s; }
+
+        .love-content {
+            position: relative;
+            z-index: 2;
+            width: min(90vw, 760px);
+            padding: 3rem 2rem;
+            text-align: center;
+            animation: appear .9s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        .heart {
+            font-size: clamp(3.8rem, 10vw, 6.5rem);
+            line-height: 1;
+            filter: drop-shadow(0 14px 20px rgba(179,47,97,.25));
+            animation: beat 1.8s ease-in-out infinite;
+        }
+
+        .love-content h1 {
+            margin: .8rem 0 .55rem;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(3rem, 9vw, 5.5rem);
+            line-height: .95;
+            color: var(--pink);
+        }
+
+        .love-content p {
+            margin: 0 auto;
+            max-width: 600px;
+            font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+            line-height: 1.65;
+            font-weight: 600;
+        }
+
+        .signature {
+            display: block;
+            margin-top: 1.6rem;
+            font-family: 'Caveat', cursive;
+            font-size: 2rem;
+            color: #b92c57;
+        }
+
+        /* =========================================================
+           PANIC / WARNING PHASE
+           ========================================================= */
+        #warningScreen {
+            z-index: 20;
+            display: grid;
+            place-items: center;
+            background: rgba(18, 0, 5, .84);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .7s ease, visibility .7s ease;
+        }
+
+        #warningScreen.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .warning-tint {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(255,30,50,.08), transparent 48%),
+                repeating-linear-gradient(0deg, rgba(255,0,0,.025) 0 2px, transparent 2px 5px);
+            animation: warningPulse 1.1s ease-in-out infinite alternate;
+        }
+
+        .warning-vignette {
+            position: absolute;
+            inset: 0;
+            box-shadow: inset 0 0 16vw 4vw rgba(0,0,0,.9);
+            pointer-events: none;
+        }
+
+        .warning-content {
+            position: relative;
+            z-index: 2;
+            width: min(88vw, 900px);
+            padding: 3rem 2.5rem;
+            text-align: center;
+            border: 2px solid rgba(255,80,80,.65);
+            border-radius: 24px;
+            background: rgba(50, 0, 7, .72);
+            box-shadow: 0 0 70px rgba(255,0,25,.24), inset 0 0 35px rgba(255,0,25,.07);
+            animation: warningEnter .7s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        .warning-icon {
+            display: inline-grid;
+            place-items: center;
+            width: 72px;
+            height: 72px;
+            margin-bottom: 1rem;
+            border-radius: 50%;
+            color: #fff;
+            background: var(--warning);
+            font-size: 2.3rem;
+            font-weight: 800;
+            box-shadow: 0 0 0 9px rgba(255,61,61,.12), 0 0 35px rgba(255,61,61,.7);
+            animation: dangerBeat .75s ease-in-out infinite;
+        }
+
+        .warning-label {
+            margin: 0 0 .7rem;
+            color: #ff8b8b;
+            font-size: clamp(.9rem, 2vw, 1.1rem);
+            font-weight: 800;
+            letter-spacing: .22em;
+            text-transform: uppercase;
+        }
+
+        .warning-title {
+            margin: 0 auto 2rem;
+            max-width: 820px;
+            color: #fff5f5;
+            font-size: clamp(1.65rem, 4vw, 3rem);
+            line-height: 1.25;
+            font-weight: 800;
+            text-shadow: 0 3px 20px rgba(255,0,0,.35);
+        }
+
+        .warning-title strong { color: #ff5555; }
+
+        .check-btn,
+        .cafe-action,
+        .zoo-btn {
+            border: 0;
+            border-radius: 999px;
+            cursor: pointer;
+            color: white;
+            font-weight: 800;
+            letter-spacing: .01em;
+            box-shadow: 0 12px 28px rgba(0,0,0,.25);
+            transition: transform .35s cubic-bezier(.175,.885,.32,1.275), box-shadow .35s ease, filter .35s ease;
+        }
+
+        .check-btn {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #ff4242, #d31532);
+            font-size: 1.2rem;
+            box-shadow: 0 12px 30px rgba(255,36,57,.35);
+        }
+
+        .check-btn:hover,
+        .cafe-action:hover,
+        .zoo-btn:hover {
+            transform: translateY(-4px) scale(1.045);
+            box-shadow: 0 18px 36px rgba(0,0,0,.32);
+            filter: brightness(1.06);
+        }
+
+        .check-btn:active,
+        .cafe-action:active,
+        .zoo-btn:active {
+            transform: scale(.97);
+        }
+
+        /* =========================================================
+           CAFE SCENE
+           ========================================================= */
+        #cafeScreen {
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            background: #c99a72;
+        }
+
+        #cafeScreen.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .cafe-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            transform: scale(1);
+            transform-origin: 50% 53%;
+            will-change: transform;
+        }
+
+        .cafe-image.zooming {
+            transition: transform 2.6s cubic-bezier(.16,1,.3,1);
+            transform: scale(var(--cafe-zoom));
+        }
+
+        .cafe-image.zoomed {
+            transform: scale(var(--cafe-zoom));
+        }
+
+        .cafe-warmth {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(74,39,18,.03), rgba(74,39,18,.12));
+            pointer-events: none;
+        }
+
+        .cafe-entry {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            z-index: 3;
+            width: min(86vw, 680px);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: #fffaf4;
+            background: rgba(58,31,20,.72);
+            border: 1px solid rgba(255,245,226,.6);
+            border-radius: 24px;
+            box-shadow: 0 18px 45px rgba(52,25,10,.24);
+            backdrop-filter: blur(7px);
+            -webkit-backdrop-filter: blur(7px);
+            transform: translate(-50%, -12px) scale(.94);
+            opacity: 0;
+            animation: cafeEntry .9s .15s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .cafe-entry.fade-away {
+            animation: cafeExit .65s ease forwards;
+        }
+
+        .cafe-entry p {
+            margin: 0;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1;
+        }
+
+        .cafe-action-wrap {
+            position: absolute;
+            left: 50%;
+            bottom: 6vh;
+            z-index: 5;
+            transform: translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .cafe-action-wrap.visible {
+            opacity: 1;
+            pointer-events: auto;
+            animation: buttonRise .75s cubic-bezier(.16,1,.3,1) both;
+        }
+
+        .cafe-action {
+            padding: 1rem 1.7rem;
+            color: #5a3828;
+            background: rgba(255,248,239,.94);
+            border: 1px solid rgba(255,255,255,.85);
+            font-size: 1.1rem;
+            box-shadow: 0 15px 35px rgba(59,31,15,.3);
+        }
+
+        /* =========================================================
+           THIS OR THAT GAME
+           ========================================================= */
+        #gameLayer {
+            position: absolute;
+            inset: 0;
+            z-index: 8;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #gameLayer.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .game-panel {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            min-width: 0;
+            transform: translateX(-28px);
+            opacity: 0;
+            padding: 0;
+            border-radius: 0;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            pointer-events: none;
+        }
+
+        #gameLayer.active .game-panel {
+            animation: panelIn .8s .1s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        .game-panel.changing {
+            animation: panelChange .45s ease both !important;
+        }
+
+        .speaker {
+            position: absolute;
+            left: clamp(18px, 4vw, 60px);
+            top: 50%;
+            transform: translateY(calc(-50% - 145px));
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            padding: .42rem .82rem;
+            border-radius: 999px;
+            color: #fff;
+            background: linear-gradient(135deg, #b52d5c, #e45c78);
+            font-size: .85rem;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            box-shadow: 0 7px 16px rgba(181,45,92,.22);
+            pointer-events: none;
+        }
+
+        .question {
+            position: absolute;
+            left: clamp(18px, 4vw, 60px);
+            top: 50%;
+            width: min(38vw, 570px);
+            margin: 0;
+            padding: clamp(1.25rem, 2.2vw, 2rem);
+            color: #4c3028;
+            font-family: 'Caveat', cursive;
+            font-size: clamp(2rem, 3.7vw, 3rem);
+            line-height: 1.08;
+            font-weight: 700;
+            border-radius: 26px;
+            background: rgba(255,248,238,.90);
+            border: 2px solid rgba(255,255,255,.9);
+            box-shadow: 0 22px 55px rgba(61,34,20,.25), inset 0 0 0 1px rgba(126,77,48,.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .options {
+            /* Keep the options container itself from creating a containing
+               block for the fixed-position buttons. This lets the buttons
+               use true viewport coordinates when they escape. */
+            position: fixed;
+            right: clamp(18px, 4vw, 60px);
+            top: 0;
+            width: min(30vw, 420px);
+            height: 100vh;
+            pointer-events: none;
+            transform: none;
+        }
+
+        .choice {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: min(30vw, 420px);
+            min-height: 58px;
+            padding: .85rem 1rem;
+            border: 1px solid rgba(145,86,57,.2);
+            border-radius: 17px;
+            cursor: pointer;
+            text-align: left;
+            color: #56352a;
+            background: rgba(255,255,255,.94);
+            box-shadow: 0 7px 18px rgba(72,38,21,.11);
+            font-size: clamp(.95rem, 1.5vw, 1.12rem);
+            font-weight: 700;
+            pointer-events: auto;
+            transition: left .72s cubic-bezier(.22,1,.36,1), top .72s cubic-bezier(.22,1,.36,1), transform .28s cubic-bezier(.175,.885,.32,1.275), box-shadow .3s ease, background .3s ease;
+            will-change: left, top, transform;
+        }
+
+        .choice::before {
+            content: attr(data-letter);
+            display: inline-grid;
+            place-items: center;
+            width: 30px;
+            height: 30px;
+            margin-right: .65rem;
+            vertical-align: middle;
+            border-radius: 50%;
+            color: #fff;
+            background: #9d674d;
+            font-size: .85rem;
+            font-weight: 800;
+        }
+
+        .choice:first-child {
+            border-color: rgba(211,47,99,.3);
+        }
+
+        .choice:first-child::before {
+            background: linear-gradient(135deg, #d92f63, #f06b88);
+        }
+
+        .choice:hover {
+            transform: translateX(5px) scale(1.025);
+            box-shadow: 0 11px 25px rgba(72,38,21,.17);
+            background: #fff;
+        }
+
+        .choice:active { transform: translateX(3px) scale(.98); }
+
+        .choice.evading {
+            transform: scale(1.035);
+            box-shadow: 0 16px 34px rgba(72,38,21,.22);
+        }
+
+        .question-count {
+            position: absolute;
+            left: clamp(18px, 4vw, 60px);
+            top: calc(50% + 150px);
+            color: #8b6757;
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .game-finish-flash {
+            position: absolute;
+            inset: 0;
+            z-index: 12;
+            background: rgba(255,247,239,.42);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .game-finish-flash.active { animation: finishFlash .9s ease both; }
+
+        /* =========================================================
+           FINAL CAFE VIEW + ZOO BUTTON
+           ========================================================= */
+        .final-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 9;
+            opacity: 0;
+            pointer-events: none;
+            background: rgba(255,247,239,0);
+            transition: opacity .7s ease, background .7s ease;
+        }
+
+        .final-overlay.visible {
+            opacity: 1;
+            background: rgba(255,247,239,.03);
+        }
+
+        .zoo-btn {
+            position: absolute;
+            left: 50%;
+            bottom: 6vh;
+            z-index: 20;
+            padding: 1rem 1.7rem;
+            color: #5a3828;
+            background: rgba(255,248,239,.96);
+            border: 1px solid rgba(255,255,255,.9);
+            font-size: 1.08rem;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 25px) scale(.92);
+        }
+
+        .zoo-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0) scale(1);
+            animation: zooAppear .8s cubic-bezier(.16,1,.3,1) both, zooPulse 2.2s ease-in-out 1s infinite;
+        }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+        @media (max-width: 760px) {
+            .game-panel {
+                inset: 0;
+                transform: translateX(-18px);
+            }
+
+            .speaker { left: 12px; }
+            .question { left: 12px; width: min(54vw, 430px); font-size: 2rem; }
+            .options { right: 12px; width: min(38vw, 330px); height: 100vh; }
+            .choice { width: min(38vw, 330px); min-height: 52px; }
+            .cafe-entry { top: 6%; }
+            .cafe-action-wrap, .zoo-btn { bottom: 3vh; }
+        }
+
+        /* =========================================================
+           KEYFRAMES
+           ========================================================= */
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(26px) scale(.96); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes beat { 50% { transform: scale(1.12); } }
+        @keyframes drift { to { transform: translateY(-16px) rotate(10deg); } }
+        @keyframes warningPulse { to { opacity: .6; transform: scale(1.015); } }
+        @keyframes warningEnter { from { opacity: 0; transform: scale(.88) translateY(25px); filter: blur(8px); } to { opacity: 1; transform: none; filter: blur(0); } }
+        @keyframes dangerBeat { 50% { transform: scale(1.09); } }
+        @keyframes cafeEntry { from { opacity: 0; transform: translate(-50%, -22px) scale(.94); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+        @keyframes cafeExit { to { opacity: 0; transform: translate(-50%, -18px) scale(.97); } }
+        @keyframes buttonRise { from { opacity: 0; transform: translate(-50%, 25px) scale(.88); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+        @keyframes panelIn { from { opacity: 0; transform: translateX(-28px) scale(.98); filter: blur(7px); } to { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); } }
+        @keyframes panelChange { 0% { opacity: 1; transform: translateX(0); } 45% { opacity: 0; transform: translateX(-16px); } 100% { opacity: 1; transform: translateX(0); } }
+        @keyframes choiceEvade { 0% { transform: translate(0,0); } 35% { transform: translate(var(--move-x),var(--move-y)) scale(1.02); } 70% { transform: translate(calc(var(--move-x) * .88),calc(var(--move-y) * .88)); } 100% { transform: translate(var(--move-x),var(--move-y)); } }
+        @keyframes finishFlash { 0% { opacity: 0; } 35% { opacity: 1; } 100% { opacity: 0; } }
+        @keyframes zooAppear { from { opacity: 0; transform: translate(-50%, 25px) scale(.9); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+        @keyframes zooPulse { 50% { box-shadow: 0 18px 38px rgba(59,31,15,.35), 0 0 0 9px rgba(255,248,239,.14); } }
+    </style>
+</head>
+<body>
+
+    <!-- Romantic opening: stays untouched for 3 seconds. -->
+    <section class="screen" id="loveScreen">
+        <div class="glow one"></div>
+        <div class="glow two"></div>
+        <span class="spark s1">✦</span>
+        <span class="spark s2">♡</span>
+        <span class="spark s3">✦</span>
+        <main class="love-content">
+            <div class="heart">♥</div>
+            <h1>It’s you, Buggu.</h1>
+            <p>Every little reason leads back to you — your smile, your silly talks, and the way you make every ordinary moment feel special.</p>
+            <span class="signature">Always yours, Tommu ♡</span>
+        </main>
+    </section>
+
+    <!-- Panic phase. This is an overlay, so the romantic screen underneath is not changed. -->
+    <section class="screen" id="warningScreen" aria-live="assertive">
+        <div class="warning-tint"></div>
+        <div class="warning-vignette"></div>
+        <div class="warning-content">
+            <div class="warning-icon">!</div>
+            <div class="warning-label">⚠ Urgent Relationship Alert ⚠</div>
+            <h2 class="warning-title">Warning!!! We find out that <strong>Tommu is having a date with an girl</strong>.</h2>
+            <button class="check-btn" id="checkBtn" type="button">Check it Now</button>
+        </div>
+    </section>
+
+    <!-- Cafe scene -->
+    <section class="screen" id="cafeScreen">
+        <img class="cafe-image" id="cafeImage" src="buggu-tommu-cafe-01.png" alt="Tommu and Buggu at a cafe">
+        <div class="cafe-warmth"></div>
+
+        <div class="cafe-entry" id="cafeEntry">
+            <p>Ohh.... this is buggu..</p>
+        </div>
+
+        <div class="cafe-action-wrap" id="cafeActionWrap">
+            <button class="cafe-action" id="talkBtn" type="button">What they are talking about ?</button>
+        </div>
+
+        <div id="gameLayer">
+            <div class="game-panel" id="gamePanel">
+                <div class="speaker">Tommu is asking 💬</div>
+                <h2 class="question" id="questionText"></h2>
+                <div class="options" id="options"></div>
+                <div class="question-count" id="questionCount"></div>
+            </div>
+        </div>
+
+        <div class="game-finish-flash" id="finishFlash"></div>
+        <div class="final-overlay" id="finalOverlay"></div>
+
+        <button class="zoo-btn" id="zooBtn" type="button">Tommu is in zoo 🦁</button>
+    </section>
+
+    <script>
+        const loveScreen = document.getElementById('loveScreen');
+        const warningScreen = document.getElementById('warningScreen');
+        const checkBtn = document.getElementById('checkBtn');
+        const cafeScreen = document.getElementById('cafeScreen');
+        const cafeImage = document.getElementById('cafeImage');
+        const cafeEntry = document.getElementById('cafeEntry');
+        const cafeActionWrap = document.getElementById('cafeActionWrap');
+        const talkBtn = document.getElementById('talkBtn');
+        const gameLayer = document.getElementById('gameLayer');
+        const gamePanel = document.getElementById('gamePanel');
+        const questionText = document.getElementById('questionText');
+        const options = document.getElementById('options');
+        const questionCount = document.getElementById('questionCount');
+        const finishFlash = document.getElementById('finishFlash');
+        const finalOverlay = document.getElementById('finalOverlay');
+        const zooBtn = document.getElementById('zooBtn');
+
+        /* Keep the zoom as one explicit value so the final zoom-out uses the exact same percentage. */
+        const CAFE_ZOOM = 1.70;
+        document.documentElement.style.setProperty('--cafe-zoom', CAFE_ZOOM);
+
+        const questions = [
+            {
+                question: 'How many kids do you want with me before marriage ?',
+                a: '3 kids',
+                b: '0. kids only after marraige.'
+            },
+            {
+                question: 'Kiss me in office party or only say hii in office part ?',
+                a: 'Kiss in office',
+                b: 'only Hii'
+            },
+            {
+                question: 'Who is more dirty?',
+                a: 'You',
+                b: 'Me'
+            },
+            {
+                question: 'Have skinny-dipping with me or normal pool time?',
+                a: 'Skinny-dipping',
+                b: 'pool time'
+            },
+            {
+                question: 'Dance without clothes or dance with clothes?',
+                a: 'Without clothes',
+                b: 'With clothes'
+            },
+            {
+                question: 'Let me hang out with other girls?',
+                a: 'Yes',
+                b: 'No'
+            },
+            {
+                question: 'I loves you more or you loves me more?',
+                a: 'You loves me more',
+                b: 'I loves you more'
+            }
+        ];
+
+        let currentQuestion = 0;
+        let gameRunning = false;
+        let questionChanging = false;
+        let zooTimer = null;
+
+        /* ---------------------------------------------------------
+           1. Three-second romantic opening -> panic overlay
+           --------------------------------------------------------- */
+        setTimeout(() => {
+            warningScreen.classList.add('visible');
+        }, 3000);
+
+        /* ---------------------------------------------------------
+           2. Warning -> cafe 01
+           --------------------------------------------------------- */
+        checkBtn.addEventListener('click', () => {
+            warningScreen.classList.remove('visible');
+            loveScreen.classList.add('hidden');
+
+            cafeScreen.classList.add('visible');
+            cafeImage.classList.remove('zooming', 'zoomed');
+            cafeImage.style.transform = 'scale(1)';
+
+            cafeEntry.classList.remove('fade-away');
+            cafeEntry.style.display = 'block';
+
+            cafeActionWrap.classList.remove('visible');
+
+            /* The requested 5-second pause before the conversation button. */
+            setTimeout(() => {
+                cafeEntry.classList.add('fade-away');
+                cafeActionWrap.classList.add('visible');
+            }, 5000);
+        });
+
+        /* ---------------------------------------------------------
+           3. Cafe 01 -> smooth zoom -> cafe 02
+           --------------------------------------------------------- */
+        talkBtn.addEventListener('click', () => {
+            if (gameRunning) return;
+
+            cafeActionWrap.classList.remove('visible');
+            cafeEntry.classList.add('fade-away');
+
+            /* This is the exact zoom value used again for the final zoom-out. */
+            cafeImage.style.transform = '';
+            requestAnimationFrame(() => {
+                cafeImage.classList.add('zooming');
+            });
+
+            setTimeout(() => {
+                /* Switch to the supplied close-up once the zoom has stopped. */
+                cafeImage.src = 'buggu-tommu-cafe-02.png';
+                /* cafe-02 is the finished close-up, so it is shown at its natural scale. */
+                cafeImage.classList.remove('zooming', 'zoomed');
+                cafeImage.style.transform = 'scale(1)';
+
+                startGame();
+            }, 2700);
+        });
+
+        /* ---------------------------------------------------------
+           4. This-or-that game
+           --------------------------------------------------------- */
+        function startGame() {
+            gameRunning = true;
+            currentQuestion = 0;
+            gameLayer.classList.add('active');
+            renderQuestion(true);
+        }
+
+        function renderQuestion(first = false) {
+            const item = questions[currentQuestion];
+            questionChanging = true;
+
+            if (!first) {
+                gamePanel.classList.add('changing');
+            }
+
+            setTimeout(() => {
+                questionText.textContent = item.question;
+                options.innerHTML = '';
+
+                const buttonA = createChoice('A', item.a, true);
+                const buttonB = createChoice('B', item.b, false);
+
+                options.appendChild(buttonA);
+                options.appendChild(buttonB);
+                questionCount.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+
+                /* Both choices always begin on the right side of the screen. */
+                requestAnimationFrame(() => placeInitialChoices(buttonA, buttonB));
+
+                /* Let the CSS animation finish before another question can start. */
+                setTimeout(() => {
+                    gamePanel.classList.remove('changing');
+                    questionChanging = false;
+                }, first ? 500 : 450);
+            }, first ? 80 : 210);
+        }
+
+        function createChoice(letter, label, isCorrectButton) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'choice';
+            button.dataset.letter = letter;
+            button.textContent = label;
+
+            if (isCorrectButton) {
+                button.addEventListener('click', () => selectAnswer());
+            } else {
+                /* The second option deliberately escapes the cursor. */
+                button.addEventListener('mouseenter', evadeChoice);
+                button.addEventListener('pointerdown', evadeChoice);
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    evadeChoice(event);
+                });
+            }
+
+            return button;
+        }
+
+        function placeInitialChoices(buttonA, buttonB) {
+            const gap = 14;
+            const right = Math.max(18, window.innerWidth * 0.04);
+            const width = buttonA.getBoundingClientRect().width;
+            const totalHeight = buttonA.offsetHeight + gap + buttonB.offsetHeight;
+            const left = window.innerWidth - right - width;
+            const top = Math.max(24, (window.innerHeight - totalHeight) / 2);
+
+            setChoicePosition(buttonA, left, top);
+            setChoicePosition(buttonB, left, top + buttonA.offsetHeight + gap);
+        }
+
+        function setChoicePosition(button, left, top) {
+            button.style.left = `${left}px`;
+            button.style.top = `${top}px`;
+        }
+
+        function rectanglesOverlap(a, b, padding = 0) {
+            return !(
+                a.right + padding < b.left ||
+                a.left - padding > b.right ||
+                a.bottom + padding < b.top ||
+                a.top - padding > b.bottom
+            );
+        }
+
+        function evadeChoice(event) {
+            if (questionChanging || !gameRunning) return;
+
+            const button = event.currentTarget;
+            const now = performance.now();
+            if (button.dataset.evadeLock && now - Number(button.dataset.evadeLock) < 500) return;
+            button.dataset.evadeLock = String(now);
+
+            const rect = button.getBoundingClientRect();
+            const cursorX = event.clientX ?? (rect.left + rect.width / 2);
+            const cursorY = event.clientY ?? (rect.top + rect.height / 2);
+            const aButton = options.querySelector('[data-letter="A"]');
+            const aRect = aButton ? aButton.getBoundingClientRect() : null;
+
+            const margin = 18;
+            const minCursorDistance = Math.max(250, Math.min(window.innerWidth, window.innerHeight) * 0.28);
+            const maxX = window.innerWidth - rect.width - margin;
+            const maxY = window.innerHeight - rect.height - margin;
+            const candidates = [];
+
+            /* Try many random destinations across the entire viewport. */
+            for (let i = 0; i < 90; i++) {
+                const x = margin + Math.random() * Math.max(1, maxX - margin);
+                const y = margin + Math.random() * Math.max(1, maxY - margin);
+                const centerX = x + rect.width / 2;
+                const centerY = y + rect.height / 2;
+                const distanceFromCursor = Math.hypot(centerX - cursorX, centerY - cursorY);
+                const candidateRect = {
+                    left: x,
+                    top: y,
+                    right: x + rect.width,
+                    bottom: y + rect.height
+                };
+
+                const overlapsA = aRect && rectanglesOverlap(candidateRect, aRect, 24);
+                if (distanceFromCursor >= minCursorDistance && !overlapsA) {
+                    candidates.push({ x, y, distanceFromCursor });
+                }
+            }
+
+            /* Prefer the destination farthest from the cursor for a more playful escape. */
+            candidates.sort((a, b) => b.distanceFromCursor - a.distanceFromCursor);
+
+            let destination = candidates[0];
+
+            /* Deterministic fallback: choose the farthest corner that does not overlap A. */
+            if (!destination) {
+                const corners = [
+                    { x: margin, y: margin },
+                    { x: maxX, y: margin },
+                    { x: margin, y: maxY },
+                    { x: maxX, y: maxY }
+                ].filter(pos => {
+                    const r = { left: pos.x, top: pos.y, right: pos.x + rect.width, bottom: pos.y + rect.height };
+                    return !aRect || !rectanglesOverlap(r, aRect, 24);
+                }).map(pos => ({
+                    ...pos,
+                    distanceFromCursor: Math.hypot(pos.x + rect.width / 2 - cursorX, pos.y + rect.height / 2 - cursorY)
+                }));
+
+                corners.sort((a, b) => b.distanceFromCursor - a.distanceFromCursor);
+                destination = corners[0] || { x: margin, y: margin };
+            }
+
+            button.classList.add('evading');
+            setChoicePosition(button, destination.x, destination.y);
+
+            clearTimeout(button._evadeTimer);
+            button._evadeTimer = setTimeout(() => {
+                button.classList.remove('evading');
+            }, 720);
+        }
+
+        function selectAnswer() {
+            if (!gameRunning || questionChanging) return;
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion(false);
+            } else {
+                finishGame();
+            }
+        }
+
+        /* ---------------------------------------------------------
+           End of game -> hide all callouts/buttons -> cafe 01 zoom-out
+           --------------------------------------------------------- */
+        function finishGame() {
+            gameRunning = false;
+            gameLayer.classList.remove('active');
+            options.innerHTML = '';
+            questionText.textContent = '';
+            questionCount.textContent = '';
+
+            finishFlash.classList.remove('active');
+            void finishFlash.offsetWidth;
+            finishFlash.classList.add('active');
+
+            /* Remove every game UI before changing the scene. */
+            setTimeout(() => {
+                finalOverlay.classList.add('visible');
+
+                /* Return to cafe 01, already at the exact same 1.70 zoom. */
+                cafeImage.src = 'buggu-tommu-cafe-01.png';
+                cafeImage.classList.remove('zooming', 'zoomed');
+                cafeImage.style.transform = `scale(${CAFE_ZOOM})`;
+
+                /* Give the browser one frame to paint the zoomed state, then zoom out. */
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        cafeImage.classList.add('zooming');
+                        cafeImage.style.transform = 'scale(1)';
+                    });
+                });
+
+                /* Exactly 5 seconds after the final scene begins, reveal the zoo button. */
+                clearTimeout(zooTimer);
+                zooTimer = setTimeout(() => {
+                    zooBtn.classList.add('visible');
+                }, 5000);
+            }, 850);
+        }
+
+        /* ---------------------------------------------------------
+           5. Final navigation
+           --------------------------------------------------------- */
+        zooBtn.addEventListener('click', () => {
+            /* Change this filename only if the next page is renamed later. */
+            window.location.href = 'page4.html';
+        });
+    </script>
+</body>
+</html>

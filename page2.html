@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Buggu - Do You Know?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@400;600;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: url('bg-park.png') no-repeat center center / cover;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+            position: relative;
+            padding: 0 2vw;
+        }
+
+        /* Subtle background vignette overlay */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: 1;
+        }
+
+        /* Left side question box */
+        .left-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 2.5rem 2rem;
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            max-width: 380px;
+            text-align: left;
+            animation: slideInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .subtitle {
+            font-family: 'Caveat', cursive;
+            font-size: 2.2rem;
+            color: #ff3366;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        .main-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #2b2b2b;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+        }
+
+        .main-title span {
+            background: linear-gradient(45deg, #ff3366, #ff4b2b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Right side options box */
+        .right-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            animation: slideInRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .btn-option {
+            background: rgba(255, 255, 255, 0.85);
+            color: #ff3366;
+            border: 2px solid #ffffff;
+            padding: 1.1rem 3rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-width: 220px;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 12px 28px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-option:hover {
+            transform: scale(1.08) translateY(-3px);
+        }
+
+        .btn-yes:hover {
+            box-shadow: 0 18px 38px rgba(255, 65, 108, 0.6);
+        }
+
+        .btn-no:hover {
+            background: #ffffff;
+            color: #e6004c;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-option:active {
+            transform: scale(0.96);
+        }
+
+        /* Dark overlay for modal phase */
+        .overlay-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+
+        .overlay-mask.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Modal Container */
+        .modal-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 60;
+            pointer-events: none;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        /* Tommu Character (Right Side Position) */
+        .character-img {
+            position: absolute;
+            left: 0%;
+            bottom: -100%;
+            height: 82vh;
+            object-fit: contain;
+            opacity: 0;
+            /* Smoothly animate left during movement */
+            transition: left 2.5s cubic-bezier(0.4, 0, 0.2, 1),
+                bottom 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.9s ease;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+        }
+
+        /* Smooth move to the right side near Buggu */
+        .modal-container.move-right .character-img {
+            left: 45vw;
+            /* Continuous percentage/vw transition from 0% */
+        }
+
+        /* Position Callout to the LEFT of Tommu */
+        .modal-container.callout-left .callout-bubble {
+            left: 4vw !important;
+            right: auto !important;
+            top: 12% !important;
+            max-width: 360px;
+        }
+
+        /* Arrow pointing RIGHT toward Tommu */
+        .modal-container.callout-left .callout-bubble::before {
+            left: auto !important;
+            right: -24px !important;
+            border-right: none !important;
+            border-left: 25px solid #ffffff !important;
+        }
+
+        .modal-container.active .character-img {
+            bottom: 0;
+            opacity: 1;
+        }
+
+        /* Tommu Callout speech bubble */
+        .callout-bubble {
+            position: absolute;
+            left: 25%;
+            right: auto;
+            top: 10%;
+            background: #ffffff;
+            padding: 2.2rem 2.5rem;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
+            opacity: 0;
+            transform: scale(0.6) translateY(20px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            border: 3px solid #ffe6eb;
+        }
+
+        /* Speech bubble arrow pointing right to Tommu */
+        .callout-bubble::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 40%;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-right: 25px solid #ffffff;
+            border-left: none;
+        }
+
+        .modal-container.active .callout-bubble {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* Buggu Character (Left Side Position) */
+        .buggu-img {
+            position: absolute;
+            right: 1%;
+            left: auto;
+            bottom: -100%;
+            height: 82vh;
+            object-fit: contain;
+            opacity: 0;
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+        }
+
+        .buggu-container.active .buggu-img {
+            bottom: 0;
+            opacity: 1;
+        }
+
+        /* Buggu walks closer while staying in her angry pose. */
+        .buggu-container.come-closer .buggu-img {
+            right: 24%;
+            transition: right 2.8s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.9s ease;
+        }
+
+        /* Buggu Callout speech bubble (Placed to the left of Buggu) */
+        .buggu-callout {
+            position: absolute;
+            right: 25%;
+            left: auto;
+            bottom: 25%;
+            background: #ffffff;
+            padding: 2.2rem 2.5rem;
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            max-width: 420px;
+            opacity: 0;
+            transform: scale(0.6) translateY(20px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            border: 3px solid #ffe6eb;
+        }
+
+        /* Speech bubble arrow pointing RIGHT toward Buggu */
+        .buggu-callout::before {
+            content: '';
+            position: absolute;
+            right: -24px;
+            left: auto;
+            top: 40%;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid #ffffff;
+            border-right: none;
+        }
+
+        .buggu-container.active .buggu-callout {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .callout-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2b2b2b;
+            line-height: 1.4;
+        }
+
+        .btn-matlab,
+        .btn-buggu-action {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.35);
+            align-self: flex-start;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-matlab:hover,
+        .btn-buggu-action:hover {
+            transform: scale(1.06) translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 65, 108, 0.5);
+        }
+
+        .btn-matlab:active,
+        .btn-buggu-action:active {
+            transform: scale(0.96);
+        }
+
+        .btn-buggu-choice {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(255, 65, 108, 0.35);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-buggu-choice:hover {
+            transform: scale(1.04) translateY(-2px);
+            box-shadow: 0 10px 22px rgba(255, 65, 108, 0.5);
+        }
+
+        .btn-buggu-choice:active {
+            transform: scale(0.96);
+        }
+
+        /* Move Tommu to the right near Buggu */
+        .modal-container.move-right .character-img {
+            left: auto;
+            right: 18%;
+            transition: left 2.5s ease-in-out, right 2.5s ease-in-out, bottom 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .combined-img {
+            position: absolute;
+            right: 5%;
+            transform: translateX(0%);
+            bottom: 0;
+            height: 82vh;
+            object-fit: contain;
+            display: none;
+            /* Soft glowing aura behind character silhouette */
+            z-index: 65;
+            transition: right 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            /* position: absolute;
+            right: 5%;
+            transform: translateX(0%);
+            bottom: 0;
+            height: 82vh;
+            object-fit: contain;
+            display: none;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.4));
+            z-index: 65;
+            Transition for moving to center
+            transition: right 2.5s cubic-bezier(0.4, 0, 0.2, 1), transform 2.5s cubic-bezier(0.4, 0, 0.2, 1); */
+        }
+
+        /* Moves image to center of screen */
+        .combined-img.move-center {
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .combined-img.active {
+            bottom: 0;
+            opacity: 1;
+        }
+
+        .buggu-right-action-wrapper {
+            position: fixed;
+            right: 5%;
+            bottom: 25%;
+            z-index: 70;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 320px;
+        }
+
+        .buggu-callout:empty {
+            display: none !important;
+        }
+
+        /* Default positioning for Buggu's initial button group (Right Side) */
+        #bugguBtnGroup {
+            position: absolute;
+            right: 25%;
+            bottom: 25%;
+            max-width: 380px;
+            z-index: 70;
+        }
+
+        .anime-bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* Light, romantic anime sunset/twilight sky gradient */
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 40%, #ffc3a0 70%, #ffafbd 100%);
+            opacity: 0;
+            z-index: 0;
+            pointer-events: none;
+            transition: opacity 2.5s ease-in-out;
+            overflow: hidden;
+        }
+
+        .anime-bg-overlay.active {
+            opacity: 1;
+        }
+
+        /* Final next-page action, revealed after the romantic background fades in */
+        .final-next-btn {
+            position: fixed;
+            left: 50%;
+            bottom: 7vh;
+            z-index: 90;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.65rem;
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #e83f6f;
+            box-shadow: 0 14px 35px rgba(172, 48, 90, 0.3), 0 0 0 7px rgba(255, 255, 255, 0.16);
+            cursor: pointer;
+            font: 700 1.05rem 'Outfit', sans-serif;
+            letter-spacing: 0.01em;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 24px) scale(0.92);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, background 0.3s ease;
+        }
+
+        .final-next-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0) scale(1);
+            animation: gentlePulse 2.2s ease-in-out infinite 0.6s;
+        }
+
+        .final-next-btn:hover {
+            background: #ffffff;
+            transform: translate(-50%, -5px) scale(1.04);
+            box-shadow: 0 20px 40px rgba(172, 48, 90, 0.42), 0 0 0 9px rgba(255, 255, 255, 0.22);
+        }
+
+        .final-next-btn:active {
+            transform: translate(-50%, 0) scale(0.97);
+        }
+
+        .final-next-btn .arrow {
+            width: 1.75rem;
+            height: 1.75rem;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .final-next-btn:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        @keyframes gentlePulse {
+            50% { box-shadow: 0 16px 38px rgba(172, 48, 90, 0.42), 0 0 0 11px rgba(255, 255, 255, 0.12); }
+        }
+
+        /* Floating animated hearts/particles */
+        .heart-particle {
+            position: absolute;
+            bottom: -10%;
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.5rem;
+            user-select: none;
+            animation: floatUp 6s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 65, 108, 0.9));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(0.8) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateY(-115vh) scale(1.3) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-60px) scale(0.9);
+                filter: blur(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(60px) scale(0.9);
+                filter: blur(8px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                filter: blur(0px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="anime-bg-overlay" id="animeBgOverlay">
+        <div class="floating-hearts" id="heartsContainer"></div>
+    </div>
+
+    <button class="final-next-btn" id="finalNextBtn" type="button" aria-label="Continue to the next page">
+        <span>One more thing</span>
+        <span class="arrow" aria-hidden="true">→</span>
+    </button>
+
+    <div class="left-container">
+        <span class="subtitle">Tell me, Buggu...</span>
+        <h1 class="main-title">Do you know why I love you <span>so much?</span></h1>
+    </div>
+
+    <div class="right-container">
+        <button class="btn-option btn-yes" id="yesBtn">
+            <span>Yes, I know! ♥</span>
+        </button>
+        <button class="btn-option btn-no" id="noBtn">
+            <span>No, tell me! ❥</span>
+        </button>
+    </div>
+
+    <div class="overlay-mask" id="overlayMask"></div>
+
+    <div class="modal-container" id="modalContainer">
+        <img src="tommu-thinking.png" alt="Tommu" class="character-img" id="characterImg">
+        <img src="Tommu-buggu-love-01.png" alt="Tommu and Buggu Love" class="combined-img" id="combinedImg">
+
+        <div class="callout-bubble" id="calloutBubble">
+            <p class="callout-text" id="calloutText">You know why I love you... really? because even I don't know. 😂
+            </p>
+            <button class="btn-matlab" id="matlabBtn">Amm, Matlab?</button>
+        </div>
+    </div>
+
+    <div class="modal-container buggu-container" id="bugguContainer">
+        <img src="buggu-avatar.png" alt="Buggu" class="buggu-img" id="bugguImg">
+
+        <!-- Container for Buggu's responses -->
+        <div id="bugguBtnGroup" style="display: none;">
+            <button class="btn-buggu-action" id="bugguNextBtn">Kya bakk rahe ho? Bta bhi do 😊</button>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const overlayMask = document.getElementById('overlayMask');
+        const modalContainer = document.getElementById('modalContainer');
+        const bugguContainer = document.getElementById('bugguContainer');
+        const characterImg = document.getElementById('characterImg');
+        const calloutText = document.getElementById('calloutText');
+        const matlabBtn = document.getElementById('matlabBtn');
+        const bugguNextBtn = document.getElementById('bugguNextBtn');
+        const finalNextBtn = document.getElementById('finalNextBtn');
+
+        // Helper function to open modal sequence
+        function openModal(imageSrc, textContent) {
+            characterImg.src = imageSrc;
+            calloutText.textContent = textContent;
+
+            overlayMask.classList.add('active');
+            modalContainer.classList.add('active');
+            modalContainer.style.pointerEvents = 'auto';
+        }
+
+        function createAnimeHearts() {
+            const container = document.getElementById('heartsContainer');
+            const heartSymbols = ['♥', '💖', '✨', '💕', '🌸'];
+
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('span');
+                heart.className = 'heart-particle';
+                heart.textContent = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                container.appendChild(heart);
+            }
+        }
+
+        // Shared ending for both choices: bring the love image in, then reveal the final message.
+        function startCombinedLoveSequence() {
+            const btnGroup = document.getElementById('bugguBtnGroup');
+            const calloutBubble = document.getElementById('calloutBubble');
+            const combinedImg = document.getElementById('combinedImg');
+
+            calloutBubble.style.display = 'none';
+            btnGroup.style.display = 'none';
+            characterImg.style.display = 'none';
+            bugguImg.style.display = 'none';
+            combinedImg.style.display = 'block';
+
+            // Appear immediately at the side, then glide to the centre.
+            setTimeout(() => {
+                combinedImg.classList.add('move-center');
+
+                setTimeout(() => {
+                    btnGroup.className = 'buggu-right-action-wrapper';
+                    btnGroup.innerHTML = `
+                        <button class="btn-buggu-action" id="bugguYeKyaBtn">ye kyaa kr ho yarrr.. tommmu</button>
+                    `;
+                    btnGroup.style.display = 'flex';
+
+                    document.getElementById('bugguYeKyaBtn').addEventListener('click', function () {
+                        btnGroup.style.display = 'none';
+                        modalContainer.classList.add('callout-left');
+                        calloutText.textContent = "Apne buggu ko bata raha hun, ki mai usse pyaar kyuu karta hun...";
+                        calloutBubble.style.left = '4vw';
+                        calloutBubble.style.right = 'auto';
+                        calloutBubble.style.display = 'flex';
+                        calloutBubble.style.opacity = '1';
+
+                        setTimeout(() => {
+                            calloutBubble.style.display = 'none';
+                            overlayMask.classList.remove('active');
+
+                            const leftContainer = document.querySelector('.left-container');
+                            const rightContainer = document.querySelector('.right-container');
+                            if (leftContainer) leftContainer.style.display = 'none';
+                            if (rightContainer) rightContainer.style.display = 'none';
+
+                            combinedImg.src = 'tommu-buggu-love-02.png';
+                            createAnimeHearts();
+                            document.getElementById('animeBgOverlay').classList.add('active');
+                            setTimeout(() => finalNextBtn.classList.add('visible'), 2500);
+                        }, 3000);
+                    });
+                }, 2500);
+            }, 3000);
+        }
+
+        // Yes button click action
+        yesBtn.addEventListener('click', function () {
+            openModal(
+                'tommu-thinking.png',
+                "You know why I love you... really? because even I don't know. 😂"
+            );
+        });
+
+        // No button click action
+        noBtn.addEventListener('click', function () {
+            openModal(
+                'tommu-shy.png',
+                "Actually, sweetheart 💕, even I don't know why I love you. 😅"
+            );
+        });
+
+        // "Amm, Matlab?" Action (Applies to both Yes & No flows)
+        matlabBtn.addEventListener('click', function () {
+            // Hide previous button in callout
+            matlabBtn.style.display = 'none';
+
+            // Change Tommu image to new icon image and update callout text
+            characterImg.src = 'tommu-explaining.png';
+            calloutText.textContent = "matlab... yr... matlab... kya hi bataooo ab eska... me bhi nhi janta kya matlab aur kaise matlab...";
+
+            // Trigger Buggu to slide up after Tommu's animation finishes (1 sec delay)
+            setTimeout(() => {
+                bugguContainer.classList.add('active');
+                bugguContainer.style.pointerEvents = 'auto';
+                document.getElementById('bugguBtnGroup').style.display = 'block';
+            }, 1000);
+        });
+
+        // Next action when Buggu's button is clicked
+        let bugguClickCount = 0;
+
+        // Next action when Buggu's button is clicked
+        bugguNextBtn.addEventListener('click', function () {
+            if (bugguClickCount === 0) {
+                // First action: Tommu gets little sad -> Buggu gets angry
+                bugguNextBtn.style.display = 'none';
+
+                characterImg.src = 'tommu-littleSad.png';
+                calloutText.textContent = "Yarr... bakkk nhi rha, ab eska kya hi answer duu me... mujhe khud bhi nhi pata.";
+
+                setTimeout(() => {
+                    bugguImg.src = 'buggu-angry.png';
+                    bugguNextBtn.textContent = "tommu, gussa mt dilayo, btaooo jaldii";
+                    bugguNextBtn.style.display = 'block';
+                    bugguClickCount++;
+                }, 3000);
+
+            } else if (bugguClickCount === 1) {
+                // Second action: Tommu gets scared -> Buggu stays angry with new button text
+                bugguNextBtn.style.display = 'none';
+
+                characterImg.src = 'tommu-Scared.png';
+                calloutText.textContent = "Gussa kyu karr rahi hun... bata raha hu... matlab koshish krta hun...";
+
+                setTimeout(() => {
+                    bugguNextBtn.textContent = "batao jaldi fir...";
+                    bugguNextBtn.style.display = 'block';
+                    bugguClickCount++;
+                }, 3000);
+            } else if (bugguClickCount === 2) {
+                bugguNextBtn.style.display = 'none';
+
+                characterImg.src = 'tommu-playful.png';
+                calloutText.textContent = "mai tumhe love kyu karta hun,, ager vo janna hai to ek shart manni padegi..";
+
+                setTimeout(() => {
+                    bugguNextBtn.textContent = "kyaa sherttt hai ? koi asi vesi shert nhi honi chahiye.. bhulo mt me abhi bi gusse me hun.";
+                    bugguNextBtn.style.display = 'block';
+                    bugguClickCount++;
+                }, 3000);
+            } else if (bugguClickCount === 3) {
+                // Hide single button
+                bugguNextBtn.style.display = 'none';
+
+                // 1. Change Tommu character and callout text
+                characterImg.src = 'tommu-flirt.png';
+                calloutText.textContent = "tumhe mere paas ana hoga, veryyy close";
+
+                // 2. Wait 3 seconds, then show the 2 options without changing Buggu's image
+                setTimeout(() => {
+                    const btnGroup = document.getElementById('bugguBtnGroup');
+                    btnGroup.innerHTML = `
+                        <button class="btn-buggu-choice" id="bugguNoBtn">Nhi mai, nhi ayungi.</button>
+                        <button class="btn-buggu-choice" id="bugguYesBtn">Aati hun, ruko.</button>
+                    `;
+
+                    // Click handlers for the two new options
+                    document.getElementById('bugguNoBtn').addEventListener('click', function () {
+                        // 1. Hide the options container immediately while Tommu responds
+                        btnGroup.style.display = 'none';
+
+                        // Keep same Tommu character (tommu-flirt.png) and update callout text
+                        calloutText.textContent = "Ager tum nhi ayugu buggu, to mai aa jaunga close";
+
+                        // 2. Wait 3 seconds before showing Buggu's response
+                        setTimeout(() => {
+                            // 3. Keep same Buggu character, restore container, and show single new button
+                            btnGroup.innerHTML = `
+                                <button class="btn-buggu-action" id="bugguNhiTommuBtn">Nhi tommu..</button>
+                            `;
+                            btnGroup.style.display = 'flex';
+
+                            // Click handler for the next step
+                            document.getElementById('bugguNhiTommuBtn').addEventListener('click', function () {
+                                // 1. Hide Buggu's button
+                                btnGroup.style.display = 'none';
+
+                                // Hide previous callout bubble
+                                const calloutBubble = document.getElementById('calloutBubble');
+                                calloutBubble.style.opacity = '0';
+
+                                // Set walking image
+                                characterImg.src = 'tommu-walkToBuggu.png';
+
+                                // 2. Trigger CSS transition
+                                modalContainer.classList.add('move-right');
+
+                                // 3. Open left callout when arrival finishes (2.5 seconds)
+                                setTimeout(() => {
+                                    modalContainer.classList.add('callout-left');
+                                    calloutText.textContent = "tumhare naa, kehne se mai maan thodi na jaunga";
+                                    calloutBubble.style.opacity = '1';
+
+                                    setTimeout(() => {
+                                        btnGroup.innerHTML = `
+                <button class="btn-buggu-action" id="bugguFinalQuestionBtn">
+                    Han han, thik hai ab, batao, batao ab, kyu karte ho mujhe bht saara love?
+                </button>
+            `;
+                                        btnGroup.style.display = 'flex';
+
+                                        // Click listener for the new button
+                                        document.getElementById('bugguFinalQuestionBtn').addEventListener('click', function () {
+                                            startCombinedLoveSequence();
+                                        });
+                                    }, 2500);
+                                }, 2500);
+                            });
+                        }, 3000);
+                    });
+
+                    document.getElementById('bugguYesBtn').addEventListener('click', function () {
+                        // Buggu stays angry but walks closer to Tommu.
+                        btnGroup.style.display = 'none';
+                        bugguContainer.classList.add('come-closer');
+
+                        // Once she arrives, Tommu changes to his walking pose without moving from his side.
+                        setTimeout(() => {
+                            characterImg.src = 'tommu-walkToBuggu.png';
+                            calloutText.textContent = "Ab batao, kyu karte ho mujhe love?";
+                            btnGroup.innerHTML = `
+                                <button class="btn-buggu-action" id="bugguYesFinalQuestionBtn">Ab batao, kyu karte ho mujhe love?</button>
+                            `;
+                            btnGroup.style.display = 'flex';
+
+                            document.getElementById('bugguYesFinalQuestionBtn').addEventListener('click', function () {
+                                startCombinedLoveSequence();
+                            });
+                        }, 2800);
+                    });
+                }, 3000);
+            }
+        });
+
+        finalNextBtn.addEventListener('click', function () {
+            window.location.href = 'page3.html';
+        });
+    </script>
+
+</body>
+
+</html>
