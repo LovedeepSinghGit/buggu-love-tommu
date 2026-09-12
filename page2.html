@@ -24,7 +24,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: url('bg-park.webp') no-repeat center center / cover;
+            background: url('bg-park.png') no-repeat center center / cover;
             font-family: 'Outfit', sans-serif;
             overflow: hidden;
             position: relative;
@@ -607,8 +607,8 @@
     <div class="overlay-mask" id="overlayMask"></div>
 
     <div class="modal-container" id="modalContainer">
-        <img src="tommu-thinking.webp" alt="Tommu" class="character-img" id="characterImg">
-        <img src="Tommu-buggu-love-01.webp" alt="Tommu and Buggu Love" class="combined-img" id="combinedImg">
+        <img src="tommu-thinking.png" alt="Tommu" class="character-img" id="characterImg">
+        <img src="Tommu-buggu-love-01.png" alt="Tommu and Buggu Love" class="combined-img" id="combinedImg">
 
         <div class="callout-bubble" id="calloutBubble">
             <p class="callout-text" id="calloutText">You know why I love you... really? because even I don't know. 😂
@@ -618,7 +618,7 @@
     </div>
 
     <div class="modal-container buggu-container" id="bugguContainer">
-        <img src="buggu-avatar.webp" alt="Buggu" class="buggu-img" id="bugguImg">
+        <img src="buggu-avatar.png" alt="Buggu" class="buggu-img" id="bugguImg">
 
         <!-- Container for Buggu's responses -->
         <div id="bugguBtnGroup" style="display: none;">
@@ -705,7 +705,7 @@
                             if (leftContainer) leftContainer.style.display = 'none';
                             if (rightContainer) rightContainer.style.display = 'none';
 
-                            combinedImg.src = 'tommu-buggu-love-02.webp';
+                            combinedImg.src = 'tommu-buggu-love-02.png';
                             createAnimeHearts();
                             document.getElementById('animeBgOverlay').classList.add('active');
                             setTimeout(() => finalNextBtn.classList.add('visible'), 2500);
@@ -718,7 +718,7 @@
         // Yes button click action
         yesBtn.addEventListener('click', function () {
             openModal(
-                'tommu-thinking.webp',
+                'tommu-thinking.png',
                 "You know why I love you... really? because even I don't know. 😂"
             );
         });
@@ -726,7 +726,7 @@
         // No button click action
         noBtn.addEventListener('click', function () {
             openModal(
-                'tommu-shy.webp',
+                'tommu-shy.png',
                 "Actually, sweetheart 💕, even I don't know why I love you. 😅"
             );
         });
@@ -737,7 +737,7 @@
             matlabBtn.style.display = 'none';
 
             // Change Tommu image to new icon image and update callout text
-            characterImg.src = 'tommu-explaining.webp';
+            characterImg.src = 'tommu-explaining.png';
             calloutText.textContent = "matlab... yr... matlab... kya hi bataooo ab eska... me bhi nhi janta kya matlab aur kaise matlab...";
 
             // Trigger Buggu to slide up after Tommu's animation finishes (1 sec delay)
@@ -757,11 +757,11 @@
                 // First action: Tommu gets little sad -> Buggu gets angry
                 bugguNextBtn.style.display = 'none';
 
-                characterImg.src = 'tommu-littleSad.webp';
+                characterImg.src = 'tommu-littleSad.png';
                 calloutText.textContent = "Yarr... bakkk nhi rha, ab eska kya hi answer duu me... mujhe khud bhi nhi pata.";
 
                 setTimeout(() => {
-                    bugguImg.src = 'buggu-angry.webp';
+                    bugguImg.src = 'buggu-angry.png';
                     bugguNextBtn.textContent = "tommu, gussa mt dilayo, btaooo jaldii";
                     bugguNextBtn.style.display = 'block';
                     bugguClickCount++;
@@ -771,7 +771,7 @@
                 // Second action: Tommu gets scared -> Buggu stays angry with new button text
                 bugguNextBtn.style.display = 'none';
 
-                characterImg.src = 'tommu-Scared.webp';
+                characterImg.src = 'tommu-Scared.png';
                 calloutText.textContent = "Gussa kyu karr rahi hun... bata raha hu... matlab koshish krta hun...";
 
                 setTimeout(() => {
@@ -782,7 +782,7 @@
             } else if (bugguClickCount === 2) {
                 bugguNextBtn.style.display = 'none';
 
-                characterImg.src = 'tommu-playful.webp';
+                characterImg.src = 'tommu-playful.png';
                 calloutText.textContent = "mai tumhe love kyu karta hun,, ager vo janna hai to ek shart manni padegi..";
 
                 setTimeout(() => {
@@ -795,7 +795,7 @@
                 bugguNextBtn.style.display = 'none';
 
                 // 1. Change Tommu character and callout text
-                characterImg.src = 'tommu-flirt.webp';
+                characterImg.src = 'tommu-flirt.png';
                 calloutText.textContent = "tumhe mere paas ana hoga, veryyy close";
 
                 // 2. Wait 3 seconds, then show the 2 options without changing Buggu's image
@@ -811,7 +811,7 @@
                         // 1. Hide the options container immediately while Tommu responds
                         btnGroup.style.display = 'none';
 
-                        // Keep same Tommu character (tommu-flirt.webp) and update callout text
+                        // Keep same Tommu character (tommu-flirt.png) and update callout text
                         calloutText.textContent = "Ager tum nhi ayugu buggu, to mai aa jaunga close";
 
                         // 2. Wait 3 seconds before showing Buggu's response
@@ -832,7 +832,7 @@
                                 calloutBubble.style.opacity = '0';
 
                                 // Set walking image
-                                characterImg.src = 'tommu-walkToBuggu.webp';
+                                characterImg.src = 'tommu-walkToBuggu.png';
 
                                 // 2. Trigger CSS transition
                                 modalContainer.classList.add('move-right');
@@ -868,7 +868,7 @@
 
                         // Once she arrives, Tommu changes to his walking pose without moving from his side.
                         setTimeout(() => {
-                            characterImg.src = 'tommu-walkToBuggu.webp';
+                            characterImg.src = 'tommu-walkToBuggu.png';
                             calloutText.textContent = "Ab batao, kyu karte ho mujhe love?";
                             btnGroup.innerHTML = `
                                 <button class="btn-buggu-action" id="bugguYesFinalQuestionBtn">Ab batao, kyu karte ho mujhe love?</button>
